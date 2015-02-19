@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fractal Simulator</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Fractal Simulator">
+  <meta name="author" content="Andrea Taglioni">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/codefont.css"></link>
+<link rel=stylesheet href="./assets/css/codemargin.css"></link>
+<link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <aside class="gdbar">
+    <img src="assets/img/Logo.png">
+  </aside>
+  <hgroup class="auto-fadein">
+    <h1>Fractal Simulator</h1>
+    <h2>a Shiny app to play with fractals</h2>
+    <p>Andrea Taglioni<br/>Coursera Data Science Path - Developing Data Products Assignment</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Fractal Simulator application</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Welcome to my <span class="red2">Coursera - Developing Data Products</span> course Assignment!  </p>
+
+<h3><b><center>An introduction </center></b></h3>
+
+<p>I&#39;ve always been fond of <span class="red2">Fractals</span>, as they put a mathematical order in chaos. And since this assignment was centered on my <span class="red2">Shiny and Slidify</span> capabilities, not on a specific algorythm in the backend, I decided to create a <span class="red2">Fractal Player</span>. Shiny application is deployed at this <a href="http://andreataglioni.shinyapps.io/Fractal_Simulator">link</a>, source files in GitHub <a href="http://github.com/andreataglioni/FractalSimulator">here</a> (subfolder AppSourceCode).</p>
+
+<h3><b><center>Credits </center></b></h3>
+
+<p>Not to reinvent the wheel, like a Data Scientist, I started from two base fractal algorythms I came into contact on the web in the past, for which I have to thank:<br>
+1. <span class="red2">Allan Roberts</span>, for his base Koch Snowflake fractal script (Oct. 2013)<br>
+2. <span class="red2">Mike Hewner</span>, for his Julia Set fractal script (Oct. 2012)  </p>
+
+<p>I put all my <span class="red2">programming effort</span> to <span class="red2">evolve this code to accept parameters</span> in input in order to <span class="red2">change shape and colors</span>...  </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class codefont" id="id" style="background:;">
+  <hgroup>
+    <h2>How it works: the sidebar panel</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div>
+	<div style='float:left;width:70%;' >
+  	<p><p>
+The Application starts with a sidebar whith a <span class="red2">selection Box</span>:  </p>
+
+	</div>
+	<div style='float:right;width:30%;'>
+  	<p><center></p>
+
+<p><img src="./assets/img/SelectBox.png" alt="width"> 
+</center></p>
+
+	</div>
+</div><div>
+		<div style='float:left;width:25%;' >
+	  <p><p>
+<img src="./assets/img/Koch.png" alt="width"><br>
+<img src="./assets/img/Julia.png" alt="width"></p>
+
+	</div>
+	<div style='float:right;width:75%;'>
+	  <p>Based on user selection, <span class="red2">sidebar changes</span>, presenting more options:  </p>
+
+<p>For the <span class="red2">Koch</span> fractal user can choose: </p>
+
+<ul>
+<li>number of <span class="red2">iterations</span> (changing the shape of the snowflake)<br></li>
+<li><span class="red2">Fill or Border color</span>, specifying Red, Green, Blue and Alpha (transparency) components.<br></li>
+</ul>
+
+<p>For the <span class="red2">Julia</span> fractal user can choose:   </p>
+
+<ul>
+<li><span class="red2">depth</span> (changing the number of colors in the fractal)<br></li>
+<li><span class="red2">points</span> (changing the number of points in the fractal, i.e. the precision) </li>
+<li>Fractal <span class="red2">Color schema</span>, choosing from four different color palettes.<br></li>
+</ul>
+
+<p>In both layouts are present buttons which enable <span class="red2">sliders reset</span>.<br>
+After parameter change, <span class="red2">fractal is generated</span> in right panel.  </p>
+
+	</div>
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class codefont" id="id" style="background:;">
+  <hgroup>
+    <h2>How it works: Koch Fractal Generation</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Changes in the sidebar panel <span class="red2">trigger the launch</span> of fractal generation functions.
+For the Koch snowflake, the <span class="red2">function is launched as follows</span> (here with sample parameters):</p>
+
+<pre><code class="r">par(mfrow=c(1,6));
+KochSnowflakeExample(&quot;#495273BB&quot;, &quot;#BBFFFF50&quot;, numiter=1) # Fill RGB(73, 82, 115, Alpha=187) - Border RGB(187,255,255,Alpha=80) - Numiter=1
+KochSnowflakeExample(&quot;#495273BB&quot;, &quot;#BBFFFF50&quot;, numiter=2) # Fill RGB(73, 82, 115  Alpha=187) - Border RGB(187,255,255,Alpha=80) - Numiter=2
+KochSnowflakeExample(&quot;#495273BB&quot;, &quot;#BBFFFF50&quot;, numiter=3) # Fill RGB(73, 82, 115 ,Alpha=187) - Border RGB(187,255,255,Alpha=80) - Numiter=3
+KochSnowflakeExample(&quot;#495273BB&quot;, &quot;#BBFFFF50&quot;, numiter=4) # Fill RGB(73, 82, 115, Alpha=187) - Border RGB(187,255,255,Alpha=80) - Numiter=4
+KochSnowflakeExample(&quot;#92383941&quot;, &quot;#BBFFFF50&quot;, numiter=3) # Fill RGB(146,56,57, Alpha=65)  - Border RGB(187,255,255,Alpha=80) - Numiter=3
+KochSnowflakeExample(&quot;#4CA84334&quot;, &quot;#29E87DAC&quot;, numiter=4) # Fill RGB(76, 168, 67, Alpha=52)  - Border RGB(41,232,125,Alpha=172) - Numiter=4
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-2.png" alt="plot of chunk unnamed-chunk-2"> 
+<br clear=left>The first four fractals differentiate only on the <span class="red2">number of iterarions</span>, from 1 to 4. In the fifth fractal we changed <span class="red2">Fill colors RGB and Alpha</span>, with 3 iterations. In the sixth we changed both <span class="red2">Fill and Border colors</span> to get a  fully colored Koch snowflake.  </p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class codefont" id="id" style="background:;">
+  <hgroup>
+    <h2>How it works: Julia Set Fractal Generation</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>For <span class="red2">Julia set</span> I preferred working more on the <span class="red2">core algorythm</span> than on colors. So I played on <span class="red2">points</span> (number of points on X axis - real - and Y axis - complex) and on <span class="red2">depth</span> (number of colors in the plot)
+The function is launched as follows (here with sample parameters):</p>
+
+<pre><code class="r">par(mfrow=c(1,5));
+generateJuliaFancy(300, 6, rainbow) # Points=300, Depth=6, Palette=rainbow
+generateJuliaFancy(60, 13, terrain.colors) # Points=60, Depth=13, Palette=terrain
+generateJuliaFancy(160, 50, rainbow) # Points=160, Depth=50, Palette=rainbow
+generateJuliaFancy(200, 8, cm.colors) # Points=200, Depth=30, Palette=cm
+generateJuliaFancy(300, 30, topo.colors) # Points=300, Depth=30, Palette=topo
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-3.png" alt="plot of chunk unnamed-chunk-3"> 
+<br clear=left>At each update, at the right-bottom of the page, some data are <span class="red2">reactively calculated</span> and displayed (HEX colors, Iterations, Palette, Points, credits).</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Fractal Simulator application'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='How it works: the sidebar panel'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='How it works: Koch Fractal Generation'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='How it works: Julia Set Fractal Generation'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

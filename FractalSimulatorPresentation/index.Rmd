@@ -1,0 +1,185 @@
+---
+title       : Fractal Simulator
+subtitle    : a Shiny app to play with fractals
+author      : Andrea Taglioni
+job         : Coursera Data Science Path - Developing Data Products Assignment 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+logo        : Logo.png
+---
+
+## Fractal Simulator application
+Welcome to my <span class="red2">Coursera - Developing Data Products</span> course Assignment!  
+### <b><center>An introduction </center></b>
+I've always been fond of <span class="red2">Fractals</span>, as they put a mathematical order in chaos. And since this assignment was centered on my <span class="red2">Shiny and Slidify</span> capabilities, not on a specific algorythm in the backend, I decided to create a <span class="red2">Fractal Player</span>. Shiny application is deployed at this <a href="http://andreataglioni.shinyapps.io/Fractal_Simulator">link</a>, source files in GitHub <a href="http://github.com/andreataglioni/FractalSimulator">here</a> (subfolder AppSourceCode).
+
+### <b><center>Credits </center></b>
+Not to reinvent the wheel, like a Data Scientist, I started from two base fractal algorythms I came into contact on the web in the past, for which I have to thank:  
+1. <span class="red2">Allan Roberts</span>, for his base Koch Snowflake fractal script (Oct. 2013)  
+2. <span class="red2">Mike Hewner</span>, for his Julia Set fractal script (Oct. 2012)  
+
+I put all my <span class="red2">programming effort</span> to <span class="red2">evolve this code to accept parameters</span> in input in order to <span class="red2">change shape and colors</span>...  
+
+--- .class #id  &twocolwithwidth .codefont 
+## How it works: the sidebar panel  
+*** =left1 width:70%
+<p>
+The Application starts with a sidebar whith a <span class="red2">selection Box</span>:  
+  
+*** =right1 width:30%
+<center>
+
+![width](./assets/img/SelectBox.png) 
+</center>
+*** =left width:25%
+<p>
+![width](./assets/img/Koch.png)  
+![width](./assets/img/Julia.png)
+
+*** =right width:75%
+Based on user selection, <span class="red2">sidebar changes</span>, presenting more options:  
+
+For the <span class="red2">Koch</span> fractal user can choose: 
+- number of <span class="red2">iterations</span> (changing the shape of the snowflake)  
+- <span class="red2">Fill or Border color</span>, specifying Red, Green, Blue and Alpha (transparency) components.  
+
+For the <span class="red2">Julia</span> fractal user can choose:   
+
+- <span class="red2">depth</span> (changing the number of colors in the fractal)  
+- <span class="red2">points</span> (changing the number of points in the fractal, i.e. the precision) 
+- Fractal <span class="red2">Color schema</span>, choosing from four different color palettes.  
+
+In both layouts are present buttons which enable <span class="red2">sliders reset</span>.  
+After parameter change, <span class="red2">fractal is generated</span> in right panel.  
+
+
+
+--- .class #id .codefont
+## How it works: Koch Fractal Generation
+```{r echo = FALSE   }
+KochSnowflakeExample <- function(triangbg=rgb(0,0,0), triangbdr=rgb(0,0,0), numiter=4){
+        
+        iterate <- function(T,i){
+                A = T[ ,1]; B=T[ ,2]; C = T[,3];
+                if (i == 1){
+                        d = (A + B)/2; h = (C-d); d = d-(1/3)*h;
+                        e = (2/3)*B + (1/3)*A; f = (1/3)*B + (2/3)*A;
+                }
+                
+                if (i == 2){
+                        d = B; e = (2/3)*B + (1/3)*C; f = (2/3)*B + (1/3)*A;
+                }
+                
+                if (i == 3){
+                        d = (B + C)/2; h = (A-d); d = d-(1/3)*h;
+                        e = (2/3)*C + (1/3)*B; f = (1/3)*C + (2/3)*B;
+                }
+                
+                if (i == 4){
+                        d = C; e = (2/3)*C + (1/3)*A; f = (2/3)*C + (1/3)*B;
+                }
+                
+                if (i == 5){
+                        d = (A + C)/2; h = (B-d); d = d-(1/3)*h;
+                        e = (2/3)*A + (1/3)*C; f = (1/3)*A + (2/3)*C;
+                }
+                
+                if (i == 6){
+                        d = A; e = (2/3)*A + (1/3)*C; f = (2/3)*A + (1/3)*B;
+                }
+                
+                if (i == 0){
+                        d = A; e = B; f = C;
+                }
+                
+                Tnew = cbind(d,e,f)
+                return(Tnew); #Return a smaller triangle.
+        }
+        
+        draw <- function(T, col=rgb(0,0,0),border=rgb(0,0,0)){
+                polygon(T[1,],T[2,],col=col,border=border)
+        }
+        
+        Iterate = function(T,v,col=rgb(0,0,0),border=rgb(0,0,0)){
+                for (i in v) T = iterate(T,i);
+                draw(T,col=col,border=border);
+        }
+        
+        #The vertices of the initial triangle:
+        A = matrix(c(1,0),2,1);
+        B = matrix(c(cos(2*pi/3), sin(2*pi/3)),2,1);
+        C = matrix(c(cos(2*pi/3),-sin(2*pi/3)),2,1);
+        T0 = cbind(A,B,C);
+        
+        plot(numeric(0),xlim=c(-1.1,1.1),ylim=c(-1.1,1.1),axes=FALSE,frame=FALSE,ann=FALSE);
+        par(mar=c(0,0,0,0),bg=rgb(1,1,1));
+        par(usr=c(-1.1,1.1,-1.1,1.1));
+        
+        #Draw snowflake:
+        maxi <- if (numiter>0) 6 else 0
+        maxj <- if (numiter>1) 6 else 0
+        maxk <- if (numiter>2) 6 else 0
+        maxl <- if (numiter>3) 6 else 0
+        for (i in 0:maxi) for (j in 0:maxj) for (k in 0:maxk) for (l in 0:maxl) Iterate(T0,c(i,j,k,l), col=triangbg, border=triangbdr);
+}
+
+generateComplexPoints <- function(realRange, imaginaryRange) {
+        result <- NULL
+        for(i in imaginaryRange) {
+                imag <- complex(imaginary = i)
+                result <- c(result, realRange + imag)
+        }
+        dim(result) <- c(length(realRange), length(imaginaryRange))
+        return (result)
+}
+generateJuliaFancy <- function(len=400, many=50, mycol) {
+        realValues <- seq(-1.5,1.5,length.out=len)
+        imaginaryValues <- seq(-1.5,1.5,length.out=len)
+        initialPoints <- generateComplexPoints(realRange=realValues,imaginaryRange=imaginaryValues)
+        
+        timeToGetLarge <- rep(0, length(initialPoints))
+        offset <- complex(real=-0.09375,imaginary=-0.8268743)
+        current <- initialPoints
+        for(i in 1:many) {
+                current <- current**2 + offset;
+                # in this one keep track of how many steps it takes before the points get
+                # larger that 2
+                timeToGetLarge <- timeToGetLarge + ifelse(Mod(current) < 2, 1, 0)
+        }
+        image(realValues,imaginaryValues,timeToGetLarge, col=c(mycol(many-1), "black"))
+
+}       
+```
+Changes in the sidebar panel <span class="red2">trigger the launch</span> of fractal generation functions.
+For the Koch snowflake, the <span class="red2">function is launched as follows</span> (here with sample parameters):
+
+```{r opts.label = 'shiny',echo = TRUE, cache=FALSE, message=FALSE,warning=FALSE,fig.height=3, fig.width=12}
+par(mfrow=c(1,6));
+KochSnowflakeExample("#495273BB", "#BBFFFF50", numiter=1) # Fill RGB(73, 82, 115, Alpha=187) - Border RGB(187,255,255,Alpha=80) - Numiter=1
+KochSnowflakeExample("#495273BB", "#BBFFFF50", numiter=2) # Fill RGB(73, 82, 115  Alpha=187) - Border RGB(187,255,255,Alpha=80) - Numiter=2
+KochSnowflakeExample("#495273BB", "#BBFFFF50", numiter=3) # Fill RGB(73, 82, 115 ,Alpha=187) - Border RGB(187,255,255,Alpha=80) - Numiter=3
+KochSnowflakeExample("#495273BB", "#BBFFFF50", numiter=4) # Fill RGB(73, 82, 115, Alpha=187) - Border RGB(187,255,255,Alpha=80) - Numiter=4
+KochSnowflakeExample("#92383941", "#BBFFFF50", numiter=3) # Fill RGB(146,56,57, Alpha=65)  - Border RGB(187,255,255,Alpha=80) - Numiter=3
+KochSnowflakeExample("#4CA84334", "#29E87DAC", numiter=4) # Fill RGB(76, 168, 67, Alpha=52)  - Border RGB(41,232,125,Alpha=172) - Numiter=4
+```
+<br clear=left>The first four fractals differentiate only on the <span class="red2">number of iterarions</span>, from 1 to 4. In the fifth fractal we changed <span class="red2">Fill colors RGB and Alpha</span>, with 3 iterations. In the sixth we changed both <span class="red2">Fill and Border colors</span> to get a  fully colored Koch snowflake.  
+
+--- .class #id .codefont
+## How it works: Julia Set Fractal Generation
+For <span class="red2">Julia set</span> I preferred working more on the <span class="red2">core algorythm</span> than on colors. So I played on <span class="red2">points</span> (number of points on X axis - real - and Y axis - complex) and on <span class="red2">depth</span> (number of colors in the plot)
+The function is launched as follows (here with sample parameters):
+
+```{r opts.label = 'shiny',echo = TRUE, cache=FALSE, message=FALSE,warning=FALSE,fig.height=3, fig.width=12}
+par(mfrow=c(1,5));
+generateJuliaFancy(300, 6, rainbow) # Points=300, Depth=6, Palette=rainbow
+generateJuliaFancy(60, 13, terrain.colors) # Points=60, Depth=13, Palette=terrain
+generateJuliaFancy(160, 50, rainbow) # Points=160, Depth=50, Palette=rainbow
+generateJuliaFancy(200, 8, cm.colors) # Points=200, Depth=30, Palette=cm
+generateJuliaFancy(300, 30, topo.colors) # Points=300, Depth=30, Palette=topo
+```
+<br clear=left>At each update, at the right-bottom of the page, some data are <span class="red2">reactively calculated</span> and displayed (HEX colors, Iterations, Palette, Points, credits).
+
